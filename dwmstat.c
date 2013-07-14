@@ -73,16 +73,18 @@ char *get_cpu(char *buf) {
 	fscanf(infile, "cpu %ld %ld %ld %ld", &lnum1, &lnum2, &lnum3, &lnum4); fclose(infile);
 	num = lnum4 > jif4 ? (int)((100 * ((lnum1 - jif1) + (lnum2 - jif2) + (lnum3 - jif3))) / (lnum4 - jif4)) : 0;
 	jif1 = lnum1; jif2 = lnum2; jif3 = lnum3; jif4 = lnum4;
-	sprintf(buf, (num > CPU_HI ? CPU_HI_S : CPU_S), num);
+	sprintf(buf, num > CPU_HI ? CPU_HI_S : CPU_S, num);
 	return buf;
 }
 
 char *get_mem(char *buf) {
+	int num;
 	long buffers, cached, free, total;
 	infile = fopen(MEM_F, "r");
 	fscanf(infile, "MemTotal: %ld kB\nMemFree: %ld kB\nBuffers: %ld kB\nCached: %ld kB\n",
 	    &total, &free, &buffers, &cached); fclose(infile);
-	sprintf(buf, MEM_S, 100 * (free + buffers + cached) / total);
+	num = 100 * (free + buffers + cached) / total;
+	sprintf(buf, num < MEM_LOW ? MEM_LOW_S : MEM_S, num);
 	return buf;
 }
 
